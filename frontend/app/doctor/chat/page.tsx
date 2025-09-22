@@ -1,0 +1,12 @@
+import { LayoutWrapper } from "@/components/layout/layout-wrapper"
+import { ChatInterface } from "@/components/chat/chat-interface"
+
+export default function ChatPage() {
+  return (
+    <LayoutWrapper>
+        <div className="h-[calc(100vh-8rem)]">
+          <ChatInterface />
+        </div>
+    </LayoutWrapper>
+  )
+}
