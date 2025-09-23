@@ -36,7 +36,7 @@ html {
         `}</style>
       </head>
       <body className={`${inter.variable} antialiased`}>
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange={false}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem enableColorScheme disableTransitionOnChange={false}>
           <AuthProvider>{children}</AuthProvider>
         </ThemeProvider>
       </body>

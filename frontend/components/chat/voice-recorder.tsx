@@ -10,26 +10,33 @@ interface VoiceRecorderProps {
   onStartRecording: () => void
   onStopRecording: () => void
   onTranscript: (transcript: string) => void
+  language: string // 🔹 add language prop
 }
 
-export function VoiceRecorder({ isRecording, onStartRecording, onStopRecording, onTranscript }: VoiceRecorderProps) {
+export function VoiceRecorder({
+  isRecording,
+  onStartRecording,
+  onStopRecording,
+  onTranscript,
+  language
+}: VoiceRecorderProps) {
   const [isSupported, setIsSupported] = useState(false)
   const recognitionRef = useRef<any>(null)
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition
+      const SpeechRecognition =
+        window.SpeechRecognition || (window as any).webkitSpeechRecognition
       if (SpeechRecognition) {
         setIsSupported(true)
         recognitionRef.current = new SpeechRecognition()
         recognitionRef.current.continuous = false
         recognitionRef.current.interimResults = false
-        recognitionRef.current.lang = "en-US"
+        recognitionRef.current.lang = language
 
         recognitionRef.current.onresult = (event: any) => {
           const transcript = event.results[0][0].transcript
           onTranscript(transcript)
-          onStopRecording()
         }
 
         recognitionRef.current.onerror = () => {
@@ -41,7 +48,7 @@ export function VoiceRecorder({ isRecording, onStartRecording, onStopRecording, 
         }
       }
     }
-  }, [onTranscript, onStopRecording])
+  }, [onTranscript, onStopRecording, language]) // 🔹 re-init when language changes
 
   const handleToggleRecording = () => {
     if (!isSupported || !recognitionRef.current) return
@@ -55,15 +62,17 @@ export function VoiceRecorder({ isRecording, onStartRecording, onStopRecording, 
     }
   }
 
-  if (!isSupported) {
-    return null
-  }
+  if (!isSupported) return null
 
   return (
     <Button
       variant="ghost"
       size="icon"
-      className={cn("h-8 w-8", isRecording && "bg-red-100 text-red-600 animate-pulse-glow dark:bg-red-950/20")}
+      className={cn(
+        "h-8 w-8",
+        isRecording &&
+          "bg-red-100 text-red-600 animate-pulse-glow dark:bg-red-950/20"
+      )}
       onClick={handleToggleRecording}
     >
       {isRecording ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
