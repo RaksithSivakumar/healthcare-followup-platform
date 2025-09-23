@@ -438,19 +438,24 @@ export function DoctorDashboard() {
   }
   
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
+      {/* Ambient background */}
+      <div className="pointer-events-none absolute inset-0 -z-10 opacity-60 dark:opacity-40">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
+        <div className="absolute -top-20 right-0 h-72 w-72 bg-gradient-to-br from-primary/20 to-accent/20 blur-3xl rounded-full" />
+      </div>
       {/* Welcome Section */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
+          <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent animate-slide-down">
             Good morning, {user?.name || 'Doctor'}!
           </h1>
-          <p className="text-muted-foreground">
-            You have {criticalPatients} critical alerts and {totalPatients} patients to review today
+          <p className="text-muted-foreground/90">
+            You have <span className="font-semibold text-destructive">{criticalPatients}</span> critical alerts and <span className="font-semibold">{totalPatients}</span> patients to review today
           </p>
         </div>
         <div className="flex space-x-2">
-          <Button onClick={fetchPatients} disabled={loading}>
+          <Button onClick={fetchPatients} disabled={loading} className="bg-blue-900 hover:bg-blue-900/65">
             {loading ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
@@ -458,7 +463,7 @@ export function DoctorDashboard() {
             )}
             Refresh
           </Button>
-          <Button asChild>
+          <Button asChild className="bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-md hover:opacity-90">
             <a href="./doctor/add-patient">
             <Plus className="mr-2 h-4 w-4" />
             Add Patient
@@ -482,7 +487,7 @@ export function DoctorDashboard() {
 
       {/* Stats Overview */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950/20">
+        <Card className="border-transparent bg-gradient-to-br from-primary/10 to-transparent dark:from-primary/15 glass-dark shadow-sm hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-blue-800 dark:text-blue-200">Total Patients</CardTitle>
             <Users className="h-4 w-4 text-blue-600" />
@@ -497,7 +502,7 @@ export function DoctorDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/20">
+        <Card className="border-transparent bg-gradient-to-br from-red-500/10 to-transparent dark:from-red-500/15 glass-dark shadow-sm hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-red-800 dark:text-red-200">Critical Alerts</CardTitle>
             <AlertTriangle className="h-4 w-4 text-red-600 animate-pulse" />
@@ -512,7 +517,7 @@ export function DoctorDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950/20">
+        <Card className="border-transparent bg-gradient-to-br from-green-500/10 to-transparent dark:from-green-500/15 glass-dark shadow-sm hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-green-800 dark:text-green-200">Recovery Rate</CardTitle>
             <TrendingUp className="h-4 w-4 text-green-600" />
@@ -527,7 +532,7 @@ export function DoctorDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-purple-200 bg-purple-50 dark:border-purple-800 dark:bg-purple-950/20">
+        <Card className="border-transparent bg-gradient-to-br from-purple-500/10 to-transparent dark:from-purple-500/15 glass-dark shadow-sm hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-purple-800 dark:text-purple-200">
               Today's Appointments
@@ -548,19 +553,19 @@ export function DoctorDashboard() {
       {/* Patient Management Section */}
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Patient List */}
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-2 glass-dark border-transparent">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle>Patient Overview</CardTitle>
-                <CardDescription>Monitor your patients' health status and alerts</CardDescription>
+                <CardTitle className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Patient Overview</CardTitle>
+                <CardDescription className="text-muted-foreground/80">Monitor your patients' health status and alerts</CardDescription>
               </div>
               <div className="flex space-x-2">
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className="bg-transparent">
                   <Filter className="mr-2 h-4 w-4" />
                   Filter
                 </Button>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className="bg-transparent">
                   <Search className="mr-2 h-4 w-4" />
                   Search
                 </Button>
@@ -569,7 +574,7 @@ export function DoctorDashboard() {
             <div className="flex space-x-2 mt-4">
               <Input 
                 placeholder="Search patients..." 
-                className="max-w-sm"
+                className="max-w-sm focus-visible:ring-2 focus-visible:ring-primary/50"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -590,12 +595,12 @@ export function DoctorDashboard() {
                 {filteredPatients.map((patient) => (
                 <div
                   key={patient.id}
-                  className={`p-4 rounded-lg border transition-all hover:shadow-md ${
+                  className={`p-4 rounded-lg border transition-all hover:shadow-md hover:ring-1 hover:ring-primary/30 ${
                       patient.riskLevel === "high"
-                      ? "border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/20"
+                      ? "border-red-200 bg-gradient-to-r from-red-500/10 to-transparent dark:border-red-800 dark:from-red-500/15 dark:to-transparent"
                         : patient.riskLevel === "medium"
-                        ? "border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-950/20"
-                        : "border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950/20"
+                        ? "border-yellow-200 bg-gradient-to-r from-yellow-500/10 to-transparent dark:border-yellow-800 dark:from-yellow-500/15 dark:to-transparent"
+                        : "border-green-200 bg-gradient-to-r from-green-500/10 to-transparent dark:border-green-800 dark:from-green-500/15 dark:to-transparent"
                   }`}
                 >
                   <div className="flex items-center justify-between">
@@ -608,7 +613,7 @@ export function DoctorDashboard() {
                       </Avatar>
                       <div>
                         <div className="flex items-center space-x-2">
-                            <h3 className="font-semibold">{patient.pname}</h3>
+                            <h3 className="font-semibold tracking-tight">{patient.pname}</h3>
                           <Badge
                             variant={
                               patient.riskLevel === "high"
@@ -683,7 +688,7 @@ export function DoctorDashboard() {
 
         {/* Quick Actions & Alerts */}
         <div className="space-y-6">
-          <Card>
+          <Card className="glass-dark border-transparent">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Bell className="h-5 w-5 text-red-500" />
@@ -698,7 +703,7 @@ export function DoctorDashboard() {
                 </div>
               ) : priorityAlerts.length > 0 ? (
                 priorityAlerts.map((alert) => (
-                  <div key={alert.patient.id + alert.timestamp} className="p-3 rounded-lg border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/20">
+                  <div key={alert.patient.id + alert.timestamp} className="p-3 rounded-lg border-red-200 bg-gradient-to-r from-red-500/10 to-transparent dark:border-red-800 dark:from-red-500/15 dark:to-transparent">
                 <div className="flex items-center justify-between">
                   <div>
                         <p className="font-medium text-red-900 dark:text-red-100">{alert.patient.pname}</p>
@@ -712,7 +717,7 @@ export function DoctorDashboard() {
                           Alert Type: {alert.type.charAt(0).toUpperCase() + alert.type.slice(1)}
                         </p>
                   </div>
-                      <Button size="sm" className="bg-red-600 hover:bg-red-700" onClick={() => setOpenPid(alert.patient.pid)}>
+                      <Button size="sm" className="bg-gradient-to-r from-red-600 to-rose-600 text-white hover:opacity-90" onClick={() => setOpenPid(alert.patient.pid)}>
                         Review
                       </Button>
                 </div>
@@ -727,7 +732,7 @@ export function DoctorDashboard() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="glass-dark border-transparent">
             <CardHeader>
               <CardTitle>Recent Activity</CardTitle>
             </CardHeader>
@@ -757,7 +762,7 @@ export function DoctorDashboard() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="glass-dark border-transparent">
             <CardHeader>
               <CardTitle>Quick Actions</CardTitle>
             </CardHeader>

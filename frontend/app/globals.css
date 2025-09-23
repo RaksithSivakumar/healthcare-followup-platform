@@ -47,25 +47,25 @@
 }
 
 .dark {
-  /* Custom dark theme palette */
-  --background: #1b1e24; /* base */
-  --foreground: #e5e7eb; /* light text */
-  --card: #23272f; /* surface */
+  /* Custom dark theme palette - deep professional navy */
+  --background: #0b1220; /* base */
+  --foreground: #e6e9ee; /* light text */
+  --card: #0f1726; /* surface */
   --card-foreground: #e6e9ee;
-  --popover: #23272f;
+  --popover: #0f1726;
   --popover-foreground: #e6e9ee;
   --primary: #58c4dc; /* accent */
-  --primary-foreground: #0f1318; /* text on primary */
-  --secondary: #333a45; /* subdued surface */
-  --secondary-foreground: #e5e7eb;
-  --muted: #333a45;
+  --primary-foreground: #0b1220; /* text on primary */
+  --secondary: #131c2e; /* subdued surface */
+  --secondary-foreground: #e6e9ee;
+  --muted: #131c2e;
   --muted-foreground: #c7cbd3; /* muted text */
   --accent: #58c4dc;
-  --accent-foreground: #0f1318;
+  --accent-foreground: #0b1220;
   --destructive: #ef4444;
-  --destructive-foreground: #0f1318;
-  --border: #374151; /* outline/grid */
-  --input: #374151;
+  --destructive-foreground: #0b1220;
+  --border: #1f2a3b; /* outline/grid */
+  --input: #1f2a3b;
   --ring: #58c4dc;
   /* Chart palette derived from primary */
   --chart-1: #58c4dc;
@@ -74,13 +74,13 @@
   --chart-4: #a7e0f0;
   --chart-5: #7cc2d6;
   /* Sidebar */
-  --sidebar: #1b1e24;
-  --sidebar-foreground: #e5e7eb;
+  --sidebar: #0b1220;
+  --sidebar-foreground: #e6e9ee;
   --sidebar-primary: #58c4dc;
-  --sidebar-primary-foreground: #0f1318;
-  --sidebar-accent: #333a45;
-  --sidebar-accent-foreground: #e5e7eb;
-  --sidebar-border: #374151;
+  --sidebar-primary-foreground: #0b1220;
+  --sidebar-accent: #131c2e;
+  --sidebar-accent-foreground: #e6e9ee;
+  --sidebar-border: #1f2a3b;
   --sidebar-ring: #58c4dc;
 
   /* Healthcare semantic colors (kept harmonious) */

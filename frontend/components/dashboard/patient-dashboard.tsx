@@ -246,19 +246,24 @@ export function PatientDashboard() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
+      {/* Ambient background */}
+      <div className="pointer-events-none absolute inset-0 -z-10 opacity-60 dark:opacity-40">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
+        <div className="absolute -top-24 left-0 h-72 w-72 bg-gradient-to-br from-primary/20 to-accent/20 blur-3xl rounded-full" />
+      </div>
       {/* Welcome Section */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
+          <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent animate-slide-down">
             Welcome back, {patientData?.pname || user?.name || 'there'}!
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground/90">
             {patientData?.pid ? `Patient ID: ${patientData.pid}` : 'Here\'s your health overview for today'}
           </p>
         </div>
         <div className="flex space-x-2">
-          <Button onClick={fetchPatientData} disabled={loading}>
+          <Button onClick={fetchPatientData} disabled={loading} className="bg-blue-900 hover:bg-blue-900/65">
             {loading ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
@@ -266,7 +271,7 @@ export function PatientDashboard() {
             )}
             Refresh
           </Button>
-          <Button asChild className="animate-pulse-glow">
+          <Button asChild className="animate-pulse-glow bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-md hover:opacity-90">
             <Link href="/chat">
               <MessageCircle className="mr-2 h-4 w-4" />
               Chat with AI
@@ -286,7 +291,7 @@ export function PatientDashboard() {
 
       {/* Enhanced Alert Cards with real data */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/20 animate-slide-down shadow-lg hover:shadow-xl transition-shadow">
+        <Card className="border-transparent bg-gradient-to-br from-rose-500/10 to-transparent dark:from-rose-500/15 glass-dark animate-slide-down shadow-lg hover:shadow-xl transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-red-800 dark:text-red-200">Current Medications</CardTitle>
             <Pill className="h-4 w-4 text-red-600" />
@@ -306,7 +311,7 @@ export function PatientDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950/20 shadow-lg hover:shadow-xl transition-shadow">
+        <Card className="border-transparent bg-gradient-to-br from-green-500/10 to-transparent dark:from-green-500/15 glass-dark shadow-lg hover:shadow-xl transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-green-800 dark:text-green-200">Recovery Progress</CardTitle>
             <CheckCircle className="h-4 w-4 text-green-600" />
@@ -324,7 +329,7 @@ export function PatientDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950/20 shadow-lg hover:shadow-xl transition-shadow">
+        <Card className="border-transparent bg-gradient-to-br from-blue-500/10 to-transparent dark:from-blue-500/15 glass-dark shadow-lg hover:shadow-xl transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-blue-800 dark:text-blue-200">Next Appointment</CardTitle>
             <Calendar className="h-4 w-4 text-blue-600" />
@@ -354,7 +359,7 @@ export function PatientDashboard() {
       {/* Main Dashboard Grid */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {/* Enhanced Vital Signs with real data */}
-        <Card className="glass glass-dark animate-fade-in-up lg:col-span-2">
+        <Card className="glass glass-dark animate-fade-in-up lg:col-span-2 border-transparent">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Heart className="h-5 w-5 text-red-500" />
@@ -403,13 +408,13 @@ export function PatientDashboard() {
         </Card>
 
         {/* Enhanced Quick Actions */}
-        <Card className="animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
+        <Card className="animate-fade-in-up glass-dark border-transparent" style={{ animationDelay: "0.2s" }}>
           <CardHeader>
             <CardTitle>Quick Actions</CardTitle>
             <CardDescription>Common tasks and features</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Button asChild className="w-full justify-start bg-gradient-to-r from-blue-500 to-teal-500 hover:from-blue-600 hover:to-teal-600 text-white">
+            <Button asChild className="w-full justify-start bg-gradient-to-r from-primary to-accent hover:opacity-90 text-white">
               <Link href="/chat">
                 <MessageCircle className="mr-2 h-4 w-4" />
                 Start AI Chat
@@ -445,7 +450,7 @@ export function PatientDashboard() {
 
       {/* Recovery Progress with real data */}
       <div className="grid gap-6 md:grid-cols-2">
-        <Card className="animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
+        <Card className="animate-fade-in-up glass-dark border-transparent" style={{ animationDelay: "0.1s" }}>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <TrendingUp className="h-5 w-5 text-green-500" />
@@ -496,7 +501,7 @@ export function PatientDashboard() {
         </Card>
 
         {/* Enhanced Recent Activity with real data */}
-        <Card>
+        <Card className="glass-dark border-transparent">
           <CardHeader>
             <CardTitle>Recent Activity</CardTitle>
             <CardDescription>Your latest health interactions</CardDescription>

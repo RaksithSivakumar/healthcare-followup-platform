@@ -7,10 +7,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { Send, ImageIcon, Bot, VolumeX, Camera, Upload } from "lucide-react"
+import { Send, ImageIcon, Bot, VolumeX, Volume2, Camera, Upload } from "lucide-react"
 import { ChatMessage } from "./chat-message"
 import { TypingIndicator } from "./typing-indicator"
-// import { VoiceRecorder } from "./voice-recorder"
+import { VoiceRecorder } from "./voice-recorder"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface Message {
   id: string
@@ -43,6 +44,22 @@ export function ChatInterface() {
   const [isTyping, setIsTyping] = useState(false)
   const [isRecording, setIsRecording] = useState(false)
   const [isSpeaking, setIsSpeaking] = useState(false)
+  const [lastSpokenId, setLastSpokenId] = useState<string | null>(null)
+  const STORAGE_KEY = "chat_history_v1"
+  const VOICE_LANG_KEY = "chat_voice_lang_v1"
+  const VOICE_MUTE_KEY = "chat_voice_muted_v1"
+  const [selectedLang, setSelectedLang] = useState<string>("en-IN")
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([])
+  const [isMuted, setIsMuted] = useState<boolean>(false)
+
+  const LANGUAGE_OPTIONS: { code: string; label: string; fallbacks: string[] }[] = [
+    { code: "en-IN", label: "English", fallbacks: ["en-IN", "en-US", "en-GB", "en"] },
+    { code: "ta-IN", label: "Tamil", fallbacks: ["ta-IN", "ta"] },
+    { code: "hi-IN", label: "Hindi", fallbacks: ["hi-IN", "hi"] },
+    { code: "ml-IN", label: "Malayalam", fallbacks: ["ml-IN", "ml"] },
+    { code: "kn-IN", label: "Kannada", fallbacks: ["kn-IN", "kn"] },
+    { code: "te-IN", label: "Telugu", fallbacks: ["te-IN", "te"] },
+  ]
   const [showImageUpload, setShowImageUpload] = useState(false)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -59,6 +76,109 @@ export function ChatInterface() {
   useEffect(() => {
     scrollToBottom()
   }, [messages, isTyping])
+
+  // Load chat history on mount
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY)
+      if (raw) {
+        const saved = JSON.parse(raw) as Message[]
+        // revive Date
+        const revived = saved.map((m) => ({ ...m, timestamp: new Date(m.timestamp) }))
+        if (revived.length > 0) {
+          setMessages(revived)
+        }
+      }
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Persist chat history whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(messages))
+    } catch {}
+  }, [messages])
+
+  // Load saved voice language & available voices
+  useEffect(() => {
+    try {
+      const savedLang = localStorage.getItem(VOICE_LANG_KEY)
+      if (savedLang) setSelectedLang(savedLang)
+      const savedMute = localStorage.getItem(VOICE_MUTE_KEY)
+      if (savedMute != null) setIsMuted(savedMute === "true")
+    } catch {}
+
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      const loadVoices = () => {
+        const v = speechSynthesis.getVoices()
+        setVoices(v)
+      }
+      loadVoices()
+      if (typeof window !== "undefined") {
+        window.speechSynthesis.onvoiceschanged = loadVoices
+      }
+    }
+  }, [])
+
+  // Convert markdown to readable plain text for TTS
+  const markdownToPlainText = (md: string) => {
+    return md
+      .replace(/```[\s\S]*?```/g, "") // remove code blocks
+      .replace(/`([^`]*)`/g, "$1") // inline code
+      .replace(/!\[[^\]]*\]\([^\)]*\)/g, "") // images
+      .replace(/\[([^\]]+)\]\([^\)]+\)/g, "$1") // links
+      .replace(/^>\s?/gm, "") // blockquotes
+      .replace(/^#{1,6}\s*/gm, "") // headings
+      .replace(/^\s*[-*+]\s+/gm, "• ") // unordered lists
+      .replace(/^\s*\d+\.\s+/gm, (m) => m.replace(/\d+\./, (n) => `${n} `)) // ordered lists
+      .replace(/\*\*([^*]+)\*\*/g, "$1") // bold
+      .replace(/\*([^*]+)\*/g, "$1") // italics
+      .replace(/_/g, " ")
+      .replace(/\|/g, " ") // tables pipes
+      .replace(/\n{2,}/g, "\n")
+      .trim()
+  }
+
+  // Pick best matching voice for the selected language
+  const getPreferredVoice = (langCode: string) => {
+    if (!voices || voices.length === 0) return null
+    const option = LANGUAGE_OPTIONS.find((l) => l.code === langCode)
+    const candidates = option ? option.fallbacks : [langCode]
+    for (const cand of candidates) {
+      const voice = voices.find((v) => v.lang?.toLowerCase().startsWith(cand.toLowerCase()))
+      if (voice) return voice
+    }
+    return null
+  }
+
+  // Speak only the latest AI message after it appears, using markdown text only
+  useEffect(() => {
+    const last = messages[messages.length - 1]
+    if (!last || last.sender !== "ai" || last.id === lastSpokenId) return
+    if (isMuted) return
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) return
+
+    const text = markdownToPlainText(last.content)
+    if (!text) return
+
+    const utterance = new SpeechSynthesisUtterance(text)
+    utterance.rate = 0.95
+    utterance.pitch = 1
+    utterance.volume = 0.85
+    utterance.lang = selectedLang
+    const preferred = getPreferredVoice(selectedLang)
+    if (preferred) utterance.voice = preferred
+    setIsSpeaking(true)
+    utterance.onend = () => setIsSpeaking(false)
+    try {
+      speechSynthesis.cancel()
+      speechSynthesis.speak(utterance)
+      setLastSpokenId(last.id)
+    } catch {
+      setIsSpeaking(false)
+    }
+  }, [messages, lastSpokenId, selectedLang, voices, isMuted])
 
   const handleSendMessage = async (content: string, type: "text" | "image" = "text", imageUrl?: string) => {
     if (!content.trim() && type === "text") return
@@ -104,12 +224,21 @@ export function ChatInterface() {
         }
       } else {
         // Call external AI endpoint
+        // include trimmed recent history for context
+        const recentHistory = [...messages, newMessage]
+          .slice(-15)
+          .map((m) => ({
+            role: m.sender === "user" ? "user" : "assistant",
+            content: m.content,
+            type: m.type,
+          }))
+
         const response = await fetch("https://raksith-healthcare.hf.space/query", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ query: content }),
+          body: JSON.stringify({ query: content, history: recentHistory }),
         })
 
         let replyText = ""
@@ -137,17 +266,6 @@ export function ChatInterface() {
       }
 
       setMessages((prev) => [...prev, aiResponse])
-
-      // Text-to-speech for AI responses
-      if ("speechSynthesis" in window) {
-        const utterance = new SpeechSynthesisUtterance(aiResponse.content)
-        utterance.rate = 0.9
-        utterance.pitch = 1
-        utterance.volume = 0.8
-        setIsSpeaking(true)
-        utterance.onend = () => setIsSpeaking(false)
-        speechSynthesis.speak(utterance)
-      }
     } catch (err: any) {
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
@@ -188,6 +306,24 @@ export function ChatInterface() {
     }
   }
 
+  const clearHistory = () => {
+    try {
+      localStorage.removeItem(STORAGE_KEY)
+      setMessages(initialMessages)
+      setLastSpokenId(null)
+    } catch {}
+  }
+
+  const toggleMute = () => {
+    const next = !isMuted
+    setIsMuted(next)
+    try { localStorage.setItem(VOICE_MUTE_KEY, String(next)) } catch {}
+    if (next && typeof window !== "undefined" && "speechSynthesis" in window) {
+      speechSynthesis.cancel()
+      setIsSpeaking(false)
+    }
+  }
+
   return (
     <div className="flex flex-col h-full">
       {/* Chat Header */}
@@ -211,11 +347,33 @@ export function ChatInterface() {
             </div>
             <div className="flex items-center space-x-2">
               <Badge variant="secondary">Secure Chat</Badge>
-              {isSpeaking && (
-                <Button variant="ghost" size="icon" onClick={stopSpeaking}>
+              <Button variant="ghost" size="icon" onClick={toggleMute} title={isMuted ? "Unmute voice" : "Mute voice"}>
+                {isMuted ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+              </Button>
+              {isSpeaking && !isMuted && (
+                <Button variant="ghost" size="icon" onClick={stopSpeaking} title="Stop speaking">
                   <VolumeX className="h-4 w-4" />
                 </Button>
               )}
+              <Select
+                value={selectedLang}
+                onValueChange={(v) => {
+                  setSelectedLang(v)
+                  try { localStorage.setItem(VOICE_LANG_KEY, v) } catch {}
+                }}
+              >
+                <SelectTrigger className="w-[150px]">
+                  <SelectValue placeholder="Voice language" />
+                </SelectTrigger>
+                <SelectContent>
+                  {LANGUAGE_OPTIONS.map((opt) => (
+                    <SelectItem key={opt.code} value={opt.code}>{opt.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button variant="ghost" size="sm" onClick={clearHistory}>
+                Clear
+              </Button>
             </div>
           </div>
         </CardHeader>
@@ -252,12 +410,12 @@ export function ChatInterface() {
                 >
                   <ImageIcon className="h-4 w-4" />
                 </Button>
-                {/* <VoiceRecorder
+                <VoiceRecorder
                   isRecording={isRecording}
                   onStartRecording={() => setIsRecording(true)}
                   onStopRecording={() => setIsRecording(false)}
                   onTranscript={handleVoiceInput}
-                /> */}
+                />
               </div>
             </div>
             <Button
