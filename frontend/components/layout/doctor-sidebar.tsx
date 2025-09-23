@@ -93,7 +93,7 @@ export function DoctorSidebar({ isCollapsed, setIsCollapsed }: DoctorSidebarProp
                 <Stethoscope className="w-5 h-5 text-primary-foreground" />
               </div>
               <div className="flex flex-col">
-                <span className="text-lg font-semibold text-sidebar-foreground">Recuver</span>
+                <span className="text-lg font-semibold text-sidebar-foreground">Healix</span>
                 <span className="text-xs text-muted-foreground">Doctor Portal</span>
               </div>
             </div>

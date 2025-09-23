@@ -70,7 +70,7 @@ export default function LoginPage() {
               <Heart className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-cyan-600 bg-clip-text text-transparent mb-1">
-              Recuver
+              Healix
             </h1>
             <h2 className="text-xl font-semibold text-gray-800 mb-2">
               Welcome Back
@@ -190,7 +190,7 @@ export default function LoginPage() {
                 ) : (
                   <>
                     <Shield className="w-5 h-5" />
-                    Sign In to Recuver
+                    Sign In to Healix
                   </>
                 )}
               </button>
@@ -211,7 +211,7 @@ export default function LoginPage() {
           <div className="text-center pb-4 px-8">
             <div className="bg-gradient-to-r from-indigo-50 to-cyan-50 rounded-2xl p-4 mb-4">
               <p className="text-sm text-gray-700 mb-2">
-                <span className="font-semibold">New to Recuver?</span>
+                <span className="font-semibold">New to Healix?</span>
               </p>
               <p className="text-xs text-gray-600 mb-3">
                 Join our healthcare platform as a medical professional
