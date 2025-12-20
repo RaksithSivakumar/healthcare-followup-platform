@@ -257,14 +257,40 @@ export function ChatInterface() {
           type: m.type,
         }));
 
+        const getSessionId = () => {
+          if (typeof window !== "undefined") {
+            let sessionId = localStorage.getItem("chat_session_id");
+            if (!sessionId) {
+              sessionId = `session-${Date.now()}-${Math.random()
+                .toString(36)
+                .substr(2, 9)}`;
+              localStorage.setItem("chat_session_id", sessionId);
+            }
+            return sessionId;
+          }
+          return null;
+        };
+
         const response = await fetch(
           "https://raksith-healthcare.hf.space/query",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ query: content, history: recentHistory }),
+            body: JSON.stringify({
+              query: content,
+              session_id: getSessionId(),
+
+              stream_response: false,
+            }),
           }
         );
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(
+            errorData.detail || `Request failed with ${response.status}`
+          );
+        }
 
         let replyText = "";
         try {
