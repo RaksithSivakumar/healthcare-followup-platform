@@ -23,6 +23,7 @@ import {
 } from "lucide-react"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useRouter } from "next/navigation"
+import DoctorAvatar3D from "./DoctorAvatar3D"
 
 const navigation = [
   { name: "Dashboard", href: "/doctor", icon: Home },
@@ -80,7 +81,6 @@ export function DoctorSidebar({ isCollapsed, setIsCollapsed }: DoctorSidebarProp
         className={cn(
           "fixed inset-y-0 left-0 z-40 bg-sidebar border-r border-sidebar-border transition-all duration-300 ease-in-out md:translate-x-0",
           isCollapsed ? "w-0 md:-translate-x-full" : "w-64",
-          // CORRECTED: Removed the redundant `md:translate-x-0` which was causing a conflict
           // with the `isCollapsed` logic on desktop screens.
           isOpen ? "translate-x-0" : "-translate-x-full",
         )}
@@ -97,16 +97,17 @@ export function DoctorSidebar({ isCollapsed, setIsCollapsed }: DoctorSidebarProp
                 <span className="text-xs text-muted-foreground">Doctor Portal</span>
               </div>
             </div>
+
             <Button
               variant="ghost"
               size="icon"
               className="ml-auto hidden md:inline-flex"
               onClick={() => setIsCollapsed(true)}
-              aria-label="Close sidebar"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
           </div>
+
 
           {/* Navigation */}
           <ScrollArea className="flex-1 py-4 px-3 min-w-64">
@@ -132,6 +133,13 @@ export function DoctorSidebar({ isCollapsed, setIsCollapsed }: DoctorSidebarProp
               })}
             </nav>
           </ScrollArea>
+          {/* 3D Doctor Avatar (below navigation) */}
+            {!isCollapsed && (
+              <div className="px-4 py-4 border-t border-sidebar-border">
+                <DoctorAvatar3D />
+              </div>
+            )}
+
 
           {/* Footer */}
           <div className="p-4 border-t border-sidebar-border min-w-64">

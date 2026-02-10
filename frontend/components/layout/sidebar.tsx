@@ -27,6 +27,8 @@ import {
 // Import the useSidebar hook
 import { useSidebar } from "./main-layout"
 import { useAuth } from "@/components/auth/auth-provider"
+import PatientAvatar3D from "./PatientAvatar3D"
+
 
 // ✅ Proper Radix Tooltip imports
 import {
@@ -247,6 +249,15 @@ export function Sidebar() {
             ))}
           </nav>
         </ScrollArea>
+        {/* Patient 3D Avatar (below navigation) */}
+        {!isCollapsed && (
+          <div className="px-4 py-4 border-t border-border/30 bg-gradient-to-b from-background/40 to-background/10">
+            <div className="rounded-xl bg-muted/20 p-3 shadow-inner ring-1 ring-border/40">
+              <PatientAvatar3D />
+            </div>
+          </div>
+        )}
+
 
         {/* Enhanced Footer Section */}
         <div className="mt-auto border-t border-border/30 bg-gradient-to-t from-muted/10 to-transparent p-4">
