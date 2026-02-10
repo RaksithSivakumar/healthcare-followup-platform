@@ -1,5 +1,10 @@
+import dynamic from "next/dynamic"
 import { LayoutWrapper } from "@/components/layout/layout-wrapper"
-import { NotificationSystem } from "@/components/doctor/notification-system"
+
+const NotificationSystem = dynamic(
+  () => import("@/components/doctor/notification-system").then((m) => m.NotificationSystem),
+  { ssr: false }
+)
 
 export default function NotificationsPage() {
   return (
