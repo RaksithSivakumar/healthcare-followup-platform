@@ -344,8 +344,11 @@ export function AddPatientForm({ onPatientAdded, onCancel }: { onPatientAdded?: 
                 <Input
                   id="hr"
                   type="number"
-                  value={formData.visits[0].vital.hr}
-                  onChange={(e) => updateVital(0, "hr", parseInt(e.target.value))}
+                  value={Number.isNaN(formData.visits[0].vital.hr) ? "" : formData.visits[0].vital.hr}
+                  onChange={(e) => {
+                    const val = e.target.value
+                    updateVital(0, "hr", val === "" ? "" : parseInt(val))
+                  }}
                   placeholder="78"
                   required
                 />
@@ -355,8 +358,11 @@ export function AddPatientForm({ onPatientAdded, onCancel }: { onPatientAdded?: 
                 <Input
                   id="spo2"
                   type="number"
-                  value={formData.visits[0].vital.spo2}
-                  onChange={(e) => updateVital(0, "spo2", parseInt(e.target.value))}
+                  value={Number.isNaN(formData.visits[0].vital.spo2) ? "" : formData.visits[0].vital.spo2}
+                  onChange={(e) => {
+                    const val = e.target.value
+                    updateVital(0, "spo2", val === "" ? "" : parseInt(val))
+                  }}
                   placeholder="98"
                   min="0"
                   max="100"
@@ -373,8 +379,16 @@ export function AddPatientForm({ onPatientAdded, onCancel }: { onPatientAdded?: 
                   id="temperature"
                   type="number"
                   step="0.1"
-                  value={formData.visits[0].vital.temperature || ""}
-                  onChange={(e) => updateVital(0, "temperature", parseFloat(e.target.value))}
+                  value={
+                    formData.visits[0].vital.temperature === undefined ||
+                    Number.isNaN(formData.visits[0].vital.temperature)
+                      ? ""
+                      : formData.visits[0].vital.temperature
+                  }
+                  onChange={(e) => {
+                    const val = e.target.value
+                    updateVital(0, "temperature", val === "" ? "" : parseFloat(val))
+                  }}
                   placeholder="98.6"
                 />
               </div>
@@ -384,8 +398,16 @@ export function AddPatientForm({ onPatientAdded, onCancel }: { onPatientAdded?: 
                   id="weight"
                   type="number"
                   step="0.1"
-                  value={formData.visits[0].vital.weight || ""}
-                  onChange={(e) => updateVital(0, "weight", parseFloat(e.target.value))}
+                  value={
+                    formData.visits[0].vital.weight === undefined ||
+                    Number.isNaN(formData.visits[0].vital.weight)
+                      ? ""
+                      : formData.visits[0].vital.weight
+                  }
+                  onChange={(e) => {
+                    const val = e.target.value
+                    updateVital(0, "weight", val === "" ? "" : parseFloat(val))
+                  }}
                   placeholder="70.5"
                 />
               </div>
@@ -395,8 +417,16 @@ export function AddPatientForm({ onPatientAdded, onCancel }: { onPatientAdded?: 
                   id="height"
                   type="number"
                   step="0.1"
-                  value={formData.visits[0].vital.height || ""}
-                  onChange={(e) => updateVital(0, "height", parseFloat(e.target.value))}
+                  value={
+                    formData.visits[0].vital.height === undefined ||
+                    Number.isNaN(formData.visits[0].vital.height)
+                      ? ""
+                      : formData.visits[0].vital.height
+                  }
+                  onChange={(e) => {
+                    const val = e.target.value
+                    updateVital(0, "height", val === "" ? "" : parseFloat(val))
+                  }}
                   placeholder="170.0"
                 />
               </div>
