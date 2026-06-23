@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import Groq from 'groq-sdk';
+import Groq from 'groq-sdk/index.mjs';
 import { redactPhi, basicToxicityCheck, hallucinationGuardrails, combineFindings } from '@/lib/phi';
 import { MongoClient, ServerApiVersion, ObjectId } from 'mongodb';
 
